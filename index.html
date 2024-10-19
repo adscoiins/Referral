@@ -104,16 +104,28 @@
         }
     </style>
     <script>
+        // Function to copy referral link and add points
         function copyToClipboard() {
             const referralLink = document.getElementById('referral-link');
             navigator.clipboard.writeText(referralLink.innerText)
                 .then(() => {
+                    // Show popup notification
                     const popup = document.getElementById('popup');
                     popup.style.display = 'block';
                     setTimeout(() => {
                         popup.style.display = 'none';
                     }, 2000);
+
+                    // Add points for referral
+                    addPoints(1000); // Add 1000 points for each referral
                 });
+        }
+
+        // Function to add points to local storage
+        function addPoints(points) {
+            let currentPoints = parseInt(localStorage.getItem('totalPoints')) || 0;
+            currentPoints += points;
+            localStorage.setItem('totalPoints', currentPoints);
         }
     </script>
 </head>
