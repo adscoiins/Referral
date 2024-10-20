@@ -139,8 +139,9 @@
 
         // Function to generate Telegram bot link with username
         function generateTelegramLink() {
-            const username = "ADcoins_bot"; // Replace with your bot's username
-            const link = `https://t.me/${username}?start=${getParameterByName('id')}`;
+            const username = getParameterByName('id');
+            const botUsername = "ADcoins_bot"; // Replace with your bot's username
+            const link = `https://t.me/${botUsername}?start=${username}`;
             document.getElementById('referral-link').innerText = link; // Update the referral link with the bot link
             document.getElementById('referral-link').href = link; // Update the href of the link
         }
@@ -165,10 +166,6 @@
     </div>
 
     <div class="earn-points">Earn 3000 Points for Each Referral!</div>
-
-    <div>
-        <a class="referral-link" id="telegram-link" target="_blank"></a>
-    </div>
 
     <div class="popup" id="popup">Link copied to clipboard!</div>
 
