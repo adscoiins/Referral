@@ -24,7 +24,7 @@
             font-weight: bold;
         }
         .referral-container {
-            background-color: #FFA500; /* تغيير إلى اللون البرتقالي */
+            background-color: #FFA500;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -39,7 +39,7 @@
         }
         .referral-link {
             font-size: 18px;
-            color: #ffffff; /* جعل الرابط باللون الأبيض */
+            color: #ffffff;
             text-decoration: underline;
             word-break: break-all;
             margin-top: 10px;
@@ -103,7 +103,6 @@
         }
     </style>
     <script>
-        // Function to copy referral link
         function copyToClipboard() {
             const referralLink = document.getElementById('referral-link');
             navigator.clipboard.writeText(referralLink.innerText)
@@ -116,40 +115,44 @@
                 });
         }
 
-        // Function to track referral entry
-        function trackReferralEntry() {
-            const referralID = getParameterByName('id');
+        window.onload = function() {
+            const referralID = getParameterByName('start');
             if (referralID) {
-                addPoints(3000);
+                addPointsToReferrer(referralID, 3000);
+                showReferralNotification(3000);
             }
-        }
+            generateTelegramLink();
+        };
 
-        // Function to add points to local storage
-        function addPoints(points) {
-            let currentPoints = parseInt(localStorage.getItem('totalPoints')) || 0;
-            currentPoints += points;
-            localStorage.setItem('totalPoints', currentPoints);
-        }
-
-        // Function to get query parameter by name
         function getParameterByName(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
 
-        // Function to generate Telegram bot link with username
-        function generateTelegramLink() {
-            const username = getParameterByName('id');
-            const botUsername = "ADcoins_bot"; // Replace with your bot's username
-            const link = `https://t.me/${botUsername}?start=${username}`;
-            document.getElementById('referral-link').innerText = link; // Update the referral link with the bot link
-            document.getElementById('referral-link').href = link; // Update the href of the link
+        function addPointsToReferrer(referralID, points) {
+            let currentPoints = parseInt(localStorage.getItem(referralID)) || 0;
+            currentPoints += points;
+            localStorage.setItem(referralID, currentPoints);
         }
 
-        window.onload = function() {
-            trackReferralEntry();
-            generateTelegramLink(); // Call function to generate link when the page loads
-        };
+        function showReferralNotification(points) {
+            const popup = document.createElement('div');
+            popup.classList.add('popup');
+            popup.innerText = `لقد تم إضافة ${points} نقاط بسبب الإحالة!`;
+            document.body.appendChild(popup);
+            setTimeout(() => {
+                popup.style.display = 'none';
+                document.body.removeChild(popup);
+            }, 2000);
+        }
+
+        function generateTelegramLink() {
+            const username = getParameterByName('id');
+            const botUsername = "ADcoins_bot";
+            const link = `https://t.me/${botUsername}?start=${username}`;
+            document.getElementById('referral-link').innerText = link;
+            document.getElementById('referral-link').href = link;
+        }
     </script>
 </head>
 <body>
@@ -158,7 +161,6 @@
 
     <div class="referral-container">
         <div class="referral-link" id="referral-link">
-            <!-- This will be updated dynamically with the Telegram bot link -->
         </div>
         <button class="copy-button" onclick="copyToClipboard()">
             <i class="fas fa-copy"></i> Copy Link
