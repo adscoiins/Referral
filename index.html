@@ -103,26 +103,32 @@
         }
     </style>
     <script>
-        function copyToClipboard() {
-            const referralLink = document.getElementById('referral-link');
-            navigator.clipboard.writeText(referralLink.innerText)
-                .then(() => {
-                    const popup = document.getElementById('popup');
-                    popup.style.display = 'block';
-                    setTimeout(() => {
-                        popup.style.display = 'none';
-                    }, 2000);
-                });
-        }
-
         window.onload = function() {
-            const referralID = getParameterByName('start');
-            if (referralID) {
-                addPointsToReferrer(referralID, 3000);
+            const userID = getUserID();
+            const referralID = generateReferralID();
+            localStorage.setItem('userID', userID);
+            localStorage.setItem('referralID', referralID);
+            generateTelegramLink(referralID);
+
+            const enteredReferralID = getParameterByName('start');
+            if (enteredReferralID) {
+                addPointsToReferrer(enteredReferralID, 3000);
                 showReferralNotification(3000);
             }
-            generateTelegramLink();
         };
+
+        function getUserID() {
+            let userID = localStorage.getItem('userID');
+            if (!userID) {
+                userID = Math.floor(Math.random() * 1000000).toString(); // توليد معرف عشوائي للمستخدم
+                localStorage.setItem('userID', userID);
+            }
+            return userID;
+        }
+
+        function generateReferralID() {
+            return Math.floor(Math.random() * 1000000).toString(); // توليد معرف عشوائي للإحالة
+        }
 
         function getParameterByName(name) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -146,12 +152,23 @@
             }, 2000);
         }
 
-        function generateTelegramLink() {
-            const username = getParameterByName('id');
+        function generateTelegramLink(referralID) {
             const botUsername = "ADcoins_bot";
-            const link = `https://t.me/${botUsername}?start=${username}`;
+            const link = `https://t.me/${botUsername}?start=${referralID}`;
             document.getElementById('referral-link').innerText = link;
             document.getElementById('referral-link').href = link;
+        }
+
+        function copyToClipboard() {
+            const referralLink = document.getElementById('referral-link');
+            navigator.clipboard.writeText(referralLink.innerText)
+                .then(() => {
+                    const popup = document.getElementById('popup');
+                    popup.style.display = 'block';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 2000);
+                });
         }
     </script>
 </head>
@@ -160,8 +177,7 @@
     <div class="header">Invite Friends</div>
 
     <div class="referral-container">
-        <div class="referral-link" id="referral-link">
-        </div>
+        <div class="referral-link" id="referral-link"></div>
         <button class="copy-button" onclick="copyToClipboard()">
             <i class="fas fa-copy"></i> Copy Link
         </button>
